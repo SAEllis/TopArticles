@@ -1,8 +1,15 @@
 from bs4 import BeautifulSoup
-#get html document from pittnews.com -> call it html_doc
+import urllib2
+from datetime import date
+
+site = 'http://www.pittnews.com'
+response = urllib2.urlopen(site)
+html_doc = response.read()
 soup = BeautifulSoup(html_doc)
 
+print "Top Articles At " + site + " on " + str(date.today()) + "\n"
 # looks like class structure is .top-ten > .item > .top > .title > a href
-# where href="x" x is article link and <a>y</a> is the article title
-
-# also look up email libraries and send weekly email with top ten titles and links
+for i,article in enumerate(soup.find('div',class_='top-ten').find_all('div',class_='item')):
+	link = article.find('div',class_='top').find('h4',class_='title').find('a')
+	print "#" + str(i+1)+": " + link.string
+	print "Link: "+ site + link.get('href') + "\n"
